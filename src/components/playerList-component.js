@@ -4,18 +4,24 @@ import SearchService from "../sevices/search.service";
 import { Pagination } from "react-pagination-bar";
 import "react-pagination-bar/dist/index.css";
 import magnifier from "../images/magnifier.png";
+import { useNavigate } from "react-router-dom";
+import Chart from "./chart-component";
 
-const PlayerListComponent = () => {
+const PlayerListComponent = ({ currentPlayer, setcurrentPlayer }) => {
   const [selectedTeam, setSelectedTeam] = useState("ALL"); // 用於儲存選中的隊伍
   const [playerName, setPlayerName] = useState(""); // 儲存輸入的球員名稱
   const [searchResult, setSearchRseult] = useState([]); //存放搜尋結果
   const [players, setPlayers] = useState([]); // 存放目前顯示的球員資料
   const [page, setPage] = useState(1); //儲存頁數
+
+  const [show, setShow] = useState(false);
+
   const [totalItems, setTotalItems] = useState("0");
   const [sortConfig, setSortConfig] = useState({
     key: "points_per_game",
     direction: "desc",
   }); // 排序
+  const navigate = useNavigate();
 
   // 處理選擇變更
   const handleTeamChange = (event) => {
@@ -181,13 +187,9 @@ const PlayerListComponent = () => {
             display: "flex",
           }}
         >
-          <button
-            type="button"
-            className="btn btn-info"
-            style={{ marginLeft: "auto" }}
-          >
-            Show Charts
-          </button>
+          <div style={{ marginLeft: "auto" }}>
+            <Chart show={show} setShow={setShow} />
+          </div>
         </div>
       </div>
       <div style={{ margin: "1rem" }}>
@@ -283,9 +285,10 @@ const PlayerListComponent = () => {
                 <td>{player.steals_per_game}</td>
                 <td>{player.blocks_per_game}</td>
                 <td
-                  onClick={() =>
-                    console.log(`前往${player.name}資料的component`)
-                  }
+                  onClick={() => {
+                    setcurrentPlayer(player);
+                    navigate("/playerdata");
+                  }}
                 >
                   <img
                     width="50%"
