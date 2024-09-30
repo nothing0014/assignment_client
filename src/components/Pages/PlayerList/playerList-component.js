@@ -1,37 +1,42 @@
 import React, { useEffect, useState } from "react";
-import teams from "../teams.json";
-import SearchService from "../sevices/search.service";
+import teams from "./teams.json";
+import SearchService from "../../../sevices/search.service";
 import { Pagination } from "react-pagination-bar";
 import "react-pagination-bar/dist/index.css";
-import magnifier from "../images/magnifier.png";
+import magnifier from "../../../images/magnifier.png";
 import { useNavigate } from "react-router-dom";
-import Chart from "./chart-component";
+import Chart from "../../Chart/chart-component";
+import "./playerList-component.css";
 
 const PlayerListComponent = ({ currentPlayer, setcurrentPlayer }) => {
-  const [selectedTeam, setSelectedTeam] = useState("ALL"); // 用於儲存選中的隊伍
+  const [selectedTeam, setSelectedTeam] = useState("ALL"); // 用於儲存選取中的隊伍
   const [playerName, setPlayerName] = useState(""); // 儲存輸入的球員名稱
   const [searchResult, setSearchRseult] = useState([]); //存放搜尋結果
   const [players, setPlayers] = useState([]); // 存放目前顯示的球員資料
   const [page, setPage] = useState(1); //儲存頁數
 
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false); //設定目前 Show charts 按鈕狀態
 
-  const [totalItems, setTotalItems] = useState("0");
+  const [totalItems, setTotalItems] = useState("0"); //取得當前搜尋結果的數量，用於生成page bar
+
   const [sortConfig, setSortConfig] = useState({
     key: "points_per_game",
     direction: "desc",
-  }); // 排序
+  }); // 設定當前排序參數， 預設是根據分數由大到小排列
+
   const navigate = useNavigate();
 
-  // 處理選擇變更
+  //紀錄當前儲存隊伍
   const handleTeamChange = (event) => {
     setSelectedTeam(event.target.value);
   };
 
+  //紀錄當前儲存隊員名稱
   const handlePlayerNameChange = (event) => {
     setPlayerName(event.target.value);
   };
 
+  //處理搜尋
   const handleSearch = () => {
     SearchService.searchData(selectedTeam, playerName, page)
       .then((data) => {
@@ -48,6 +53,7 @@ const PlayerListComponent = ({ currentPlayer, setcurrentPlayer }) => {
       });
   };
 
+  //回傳當前搜尋結果的總數量
   const handleTotalItemSearch = () => {
     console.log("執行Total item search");
     SearchService.searchTotalItem(selectedTeam, playerName)
@@ -100,24 +106,10 @@ const PlayerListComponent = ({ currentPlayer, setcurrentPlayer }) => {
   };
 
   return (
-    <div style={{ margin: "1rem", padding: "rem", fontSize: "1.75rem" }}>
-      <div>
-        <div
-          style={{
-            border: "2px solid black",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              width: "100%",
-              padding: "1rem",
-            }}
-          >
+    <div className="playerlist">
+      <div className="upperarea">
+        <div className="searchTable">
+          <div className="searchTable-upper">
             <div
               className="form-group"
               style={{
@@ -165,12 +157,12 @@ const PlayerListComponent = ({ currentPlayer, setcurrentPlayer }) => {
               </div>
             </div>
           </div>
-          <div>
+          <div className="searchTable-lower">
             <button
               type="button"
               className="btn btn-dark"
               onClick={() => {
-                if (page != 1) {
+                if (page !== 1) {
                   setPage(1);
                 } else {
                   handleSearch();
@@ -182,17 +174,13 @@ const PlayerListComponent = ({ currentPlayer, setcurrentPlayer }) => {
             </button>
           </div>
         </div>
-        <div
-          style={{
-            display: "flex",
-          }}
-        >
-          <div style={{ marginLeft: "auto" }}>
+        <div className="showcharts-container">
+          <div className="showcharts-item">
             <Chart show={show} setShow={setShow} />
           </div>
         </div>
       </div>
-      <div style={{ margin: "1rem" }}>
+      <div className="sortTable">
         <table className="table">
           <thead>
             <tr>
@@ -299,7 +287,7 @@ const PlayerListComponent = ({ currentPlayer, setcurrentPlayer }) => {
                 </td>
               </tr>
             ))}
-            {players.length == 0 && (
+            {players.length === 0 && (
               <tr>
                 <td colSpan={8} style={{ textAlign: "center" }}>
                   Data not found
@@ -309,9 +297,9 @@ const PlayerListComponent = ({ currentPlayer, setcurrentPlayer }) => {
           </tbody>
         </table>
       </div>
-      {players.length != 0 && (
-        <div style={{ display: "flex" }}>
-          <div style={{ marginLeft: "auto" }}>
+      {players.length !== 0 && (
+        <div className="pagebar-container">
+          <div className="pagebar-item">
             <Pagination
               totalItems={totalItems}
               currentPage={page}

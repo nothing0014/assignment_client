@@ -33,27 +33,11 @@ class SearchService {
 
     return axios.get(query);
   }
-  // login(email, password) {
-  //   return axios.post(API_URL + "/login", {
-  //     email,
-  //     password,
-  //   });
-  // }
-  // logout() {
-  //   localStorage.removeItem("user");
-  // }
-  // register(username, email, password, role) {
-  //   return axios.post(API_URL + "/register", {
-  //     username,
-  //     email,
-  //     password,
-  //     role,
-  //   });
-  // }
 
-  // getCurrentUser() {
-  //   return JSON.parse(localStorage.getItem("user"));
-  // }
+  searchTeam15() {
+    let query = API_URL + "/team15";
+    return axios.get(query);
+  }
 }
 
 export default new SearchService();
